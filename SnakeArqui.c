@@ -1,7 +1,6 @@
 #include "ripes_system.h"
 #include "stdio.h"
 #include "stdlib.h"
-#include "time.h"
 
 
 void set_pixel(unsigned int x, unsigned int y, unsigned int color) {
@@ -20,8 +19,6 @@ void create_snake(unsigned int x, unsigned int y){
 
 }
 
-
-
 void create_apple(unsigned int x,unsigned int y){
     set_pixel(x,y,0x00FF00);
     set_pixel(x + 1,y,0x00FF00);
@@ -39,7 +36,7 @@ void set_apple(){
     
 void move_snake(unsigned int x, unsigned int y){
         create_snake(x,y);
-    }
+}
 
 int main(){
 
@@ -58,34 +55,32 @@ int main(){
     
     create_snake(x,y);
     set_apple();
+    
+    int bandera_juego = 1;
 
-    while(1){
+    while(bandera_juego){
+        
+        if (x >= 33 || x < 0 || y >= 23 || y < 0) {
+        printf("Game Over: Snake hit the wall\n");
+        bandera_juego = 0;
+        }
+
         if (*up == 1 && key_up_pressed == 0){
             key_up_pressed = 1;
             y += 1;
-            y = y % 24;
             move_snake(x,y);
         } else if (*down == 1 && key_down_pressed == 0){
             key_down_pressed = 1;
             y -= 1;
-            if (y < 0){
-                y = 24;
-            }
             move_snake(x,y);
         } else if (*left == 1 && key_left_pressed == 0){
             key_left_pressed = 1;
             x -= 1;
-            if (x < 0){
-                x = 34;
-                y -= 1;
-            }
             move_snake(x,y);
             
         } else if (*right == 1 && key_right_pressed == 0){
             key_right_pressed = 1;
             x += 1;
-            x = x % 34;
-            
             move_snake(x,y);
         }
         
