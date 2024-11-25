@@ -2,19 +2,73 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-#define MAX_SNAKE_LENGTH 100
+//Valores generales
+#define MAX_Y 25
+#define MAX_X 35
+#define RED 0xFF00
+#define GREEN 0x00FF00
+#define WHITE 0xFFFFFF
+#define SW0 (0x01)
 
-int eaten = 0;
+unsigned int *led_matrix = LED_MATRIX_0_BASE;
+unsigned int *control_pad = D_PAD_0_BASE;
+unsigned int *switches = SWITCHES_0_BASE;
+unsigned int game_state = 1;
+
+//Definicion para la serpiente 
+int snake_x[MAX_HEIGHT * MAX_WIDTH / 2];
+int snake_y[MAX_HEIGHT * MAX_WIDTH / 2];
 unsigned int apple_x = 0;
 unsigned int apple_y = 0;
-unsigned int length = 2;
-unsigned int snake[MAX_SNAKE_LENGTH][2]; // Array for snake segments
+unsigned int current_direction = 2;
+unsigned int old_direction = 2
+int rand_seed = 46;
+
+typedef enum {
+    UP,
+    DOWN,
+    RIGHT,
+    LEFT
+} Direction;
+
+//Definicion de funciones
+void create_snake();
+void move_snake();
+void create_apple();
+int restart_game();
+void set_pixel();
+void set_apple();
+void init_snake();
+int collision_apple();
+void init_snake();
 
 void set_pixel(unsigned int x, unsigned int y, unsigned int color) {
     unsigned int *led_base = LED_MATRIX_0_BASE;
     unsigned int offset = x + (24 - y) * LED_MATRIX_0_WIDTH;
     unsigned int *address = led_base + offset;
     *address = color;
+}
+
+void create_snake(){
+    int led_states[MAX_WIDTH * MAX_HEIGHT] = {0};
+
+    for (int i = 0; i < snake_length; i++) {
+        for (int dx = 0; dx < 2; dx++) {
+            for (int dy = 0; dy < 2; dy++) {
+                led_states[(snake_y[i] * 2 + dy) * MAX_WIDTH + (snake_x[i] * 2 + dx)] = RED;
+            }
+        }
+    }
+
+    for (int dx = 0; dx < 2; dx++) {
+        for (int dy = 0; dy < 2; dy++) {
+            led_states[(fruit_y * 2 + dy) * MAX_WIDTH + (fruit_x * 2 + dx)] = GREEN;
+        }
+    }
+
+    for (int i = 0; i < MAX_HEIGHT * MAX_WIDTH; i++) {
+        *(led_matrix + i) = led_states[i];
+    }
 }
 
 void create_apple(unsigned int x, unsigned int y) {
